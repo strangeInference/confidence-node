@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import Sugar from "sugar-date";
 
 class NewPred extends Component {
   constructor(props) {
@@ -14,10 +15,11 @@ class NewPred extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const dateKnown = Sugar.Date.create(this.state.dateKnown).toJSON();
     this.setState({
-      dateCreated: new Date().toJSON()
-    })
-    console.log(this.getState());
+      dateCreated: new Date().toJSON(),
+      dateKnown: dateKnown,
+    }, function(){ console.log(this.state); })
   } 
 
   handleInputChange(event) {
