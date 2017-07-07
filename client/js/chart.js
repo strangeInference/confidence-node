@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-//import * as d3 from "d3";
-var d3 = require("d3")
+import * as d3 from "d3";
+//var d3 = require("d3")
 
 class Chart extends Component {
   constructor(props) {
@@ -67,22 +67,28 @@ class Chart extends Component {
   }
 
   drawChart() {
-    const xScale = d3.scaleLinear().domain([50, 100]).range([0, 500]);
-    const yScale = d3.scaleLinear().domain([0, 100]).range([0, 300]);
+    const xScale = d3.scaleLinear().domain([50, 100]).range([10, 510]);
+    const yScale = d3.scaleLinear().domain([0, 100]).range([310, 10]);
+    const rScale = d3.scaleLinear().domain([0, d3.max(this.state.buckets, (d) => {return d.n})]).range([1, 20]);
 
-    const chart = d3.select(this.svg).attr("width", 500).attr("height", 300);
+    const xGrid = d3.axisBottom(xScale).ticks(5);
+    const yGrid = d3.axisLeft(yScale).ticks(5);
+
+    const chart = d3.select(this.svg).attr("width", 520).attr("height", 320);
     const conf = chart.selectAll("g").data(this.state.buckets).enter().append("g");
     conf.append("circle")
         .attr("cx", (d) => {return xScale(d.lable)})
         .attr("cy", (d) => {return yScale((d.accurate / d.n) * 100)})
-        .attr("fill", "black").attr("r", 5);
+        .attr("fill", "black").attr("r", (d) => {return d.n});
+
+    chart.append("g").attr("class", "grid").call(xGrid.tickSize(-520).tickFormat(""));
 
   }
 
   render() {
     return (
-      <div>
-        <svg ref={(svg) => this.svg = svg}></svg>
+      <div className="chart">
+        <svg className="chart" ref={(svg) => this.svg = svg}></svg>
       </div>
     );
   }

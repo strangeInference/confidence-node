@@ -19,7 +19,7 @@ class NewPred extends Component {
     this.setState({
       dateCreated: new Date().toJSON(),
       dateKnown: dateKnown,
-    }, function(){ console.log(this.state); })
+    }, () => { console.log(this.state) })
   } 
 
   handleInputChange(event) {
