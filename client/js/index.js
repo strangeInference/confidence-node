@@ -1,68 +1,63 @@
 import React, {Component} from "react";
 import ReactDOM, {render} from "react-dom";
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
-import NewPred from "./newPred.js";
-import Chart from "./chart.js";
-import PredList from "./predList.js";
+import App from "./app.js";
+import Login from "./login.js";
 import $ from "jquery";
 
-class App extends Component {
+class Index extends Component {
   constructor() {
     super();
     this.state = {
-      tabIndex: 0,
-      predictions: [] /*[{prediction: "this will work", prob: 40, outcome: false, pending: false}, 
-                    {prediction: "this wont't work", prob: 60, outcome: true, pending: false},
-                    {prediction: "this will be pending", prob: 76, outcome: true, pending: true}] */
-    }
+      loggedIn: false,
+      singedUp: false,
+      predictions: []
+    };
+
+    this.handdleLogin = this.handdleLogin.bind(this);
   }
 
-  componentDidMount() {
-    console.log(this.props.url)
-    $.ajax({
-      method: "GET",
-      url: "/predictions",
-      dataType: "json",
-      cache: false,
-      success: (data) => {
-        this.setState({
-          predictions: data
-        });
-        console.log("getting predictions");
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.url, status, err.toString());
-      }
+  handdleLogin() {
+    if (!this.state.loggedIn) {
+      $.ajax({
+        method: "GET",
+        url: "/predictions",
+        dataType: "json",
+        cache: false,
+        // success: (data) => {
+        //   this.setState({
+        //     predictions: data
+        //   });
+        //   console.log("getting predictions", data);
+        // },
+        // error: (xhr, status, err) => {
+        //   console.error(this.props.url, status, err.toString());
+        // }
+    }).done((data) => {
+      this.setState({
+        predictions: data
+      });
+      console.log("getting predictions", data);
+      this.setState({
+        loggedIn: !this.state.loggedIn
+      });
     })
+    }
+    // this.setState({
+    //   loggedIn: !this.state.loggedIn
+    // });
   }
 
   render() {
     return (
-      <Tabs>
-        <TabList>
-          <Tab>New Prediction</Tab>
-          <Tab>Pending Predictions</Tab>
-          <Tab>Past Predictions</Tab>
-          <Tab>Prediction Feed</Tab>
-          <Tab>Confidence Chart</Tab>
-        </TabList>
-        <TabPanel>
-          <NewPred/>
-        </TabPanel>
-        <TabPanel>
-          <PredList predictions={this.state.predictions} type={"pending"} />
-        </TabPanel>
-        <TabPanel>
-          <PredList predictions={this.state.predictions} type={"past"} />
-        </TabPanel>
-        <TabPanel>
-        </TabPanel>
-        <TabPanel>
-          <Chart/>
-        </TabPanel>
-      </Tabs>
+      <div>
+        {this.state.loggedIn && <button onClick={this.handdleLogin}>Logout</button>}
+        {this.state.loggedIn && <App predictions={this.state.predictions}/>}
+        {!this.state.loggedIn && <Login loginCallback={this.handdleLogin}/>}
+        <button onClick={this.handdleLogin}>Toggle Login</button>
+      </div>
     );
   }
+
 }
-render(<App/>, document.getElementById('root'));
+
+render(<Index/>, document.getElementById('root'));

@@ -3,25 +3,51 @@ import Pred from "./pred.js";
 
 class PredList extends Component {
 
-  render() {
+  mapSort() {
     let predictions = this.props.predictions;
-    if (this.props.type === "pending") {
-      predictions = predictions.filter((p) => {
-        return p.pending;
-      });
-    } else {
-      predictions = predictions.filter((p) => {
-        return !p.pending;
-      });
-    }
-    predictions = predictions.map((p) => {
-      return (
-        <Pred p={p} />
+
+    predictions = predictions.map((p, i) => {
+      if (this.props.type === "pending" && p.outcome === null) {
+        return (
+          <Pred key={String(i)} p={p} index={i} setOutcome={this.props.setOutcome} />
         );
-    })
+      }
+      if (this.props.type === "past" && p.outcome !== null) {
+        return (
+          <Pred key={String(i)} p={p} index={i} />
+        );
+      }
+    });
+    predictions.sort((a, b) => {
+      if (!a || !b) {
+        return 0;
+      }
+      if (this.props.type === "pending") {
+        return new Date(a.props.p.date_known) - new Date(b.props.p.date_known);
+      } else {
+        return new Date(b.props.p.updatedAt) - new Date(a.props.p.updatedAt);
+      }
+    });
+
+    return predictions;
+  }
+
+  render() {
+    
+    // if (this.props.type === "pending") {
+    //   predictions = predictions.filter((p) => {
+    //     return p.outcome === null;
+    //   });
+    // } else {
+    //   predictions = predictions.filter((p) => {
+    //     return p.outcome !== null;
+    //   });
+    // }
+    
+    
 
     return (
-      <div>{predictions}</div>
+      <div>{this.mapSort()}</div>
       );
   }
 }

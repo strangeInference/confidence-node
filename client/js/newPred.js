@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import Sugar from "sugar-date";
+import $ from "jquery";
 
 class NewPred extends Component {
   constructor(props) {
@@ -19,7 +20,18 @@ class NewPred extends Component {
     this.setState({
       dateCreated: new Date().toJSON(),
       dateKnown: dateKnown,
-    }, () => { console.log(this.state) })
+    }, () => { 
+      //console.log(this.state);
+      $.ajax({
+      method: "POST",
+      url: "/newPred",
+      data: this.state,
+      success: (pred) => {
+        console.log("sending prediction: ", pred);
+        this.props.addPred(pred);
+      }
+    });
+    })
   } 
 
   handleInputChange(event) {
