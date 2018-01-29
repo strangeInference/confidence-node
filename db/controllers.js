@@ -44,7 +44,7 @@ module.exports = {
           password: hash
         });
       });
-      res.status(200).json({valid: true});
+      res.status(201).json({valid: true});
     },
 
     put: function(req, res) {
@@ -72,6 +72,13 @@ module.exports = {
       });
 
       
+    },
+
+    logout: function(req, res) {
+      console.log("trying to logout");
+      req.session.destroy(function(err){});
+      res.status(204);
     }
+
   }
 }

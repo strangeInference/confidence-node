@@ -32,6 +32,7 @@ app.put("/outcome", contrl.predictions.put);
 
 app.post("/signup", contrl.auth.post);
 app.put("/login", contrl.auth.put);
+app.put("/logout", contrl.auth.logout);
 
 var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/';
 console.log(conString);
@@ -42,7 +43,7 @@ function isLoggedin(req, res, next) {
   if (req.session.userId){
     next();
   } else {
-    res.send("invalid");
+    res.status(401);
   }
 }
 
